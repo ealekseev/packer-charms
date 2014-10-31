@@ -1,0 +1,69 @@
+{
+  "builders": [
+    {
+      "accelerator": "kvm",
+      "boot_command": [],
+      "boot_wait": "5s",
+      "disk_interface": "scsi",
+      "disk_size": 8000,
+      "format": "raw",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum_type": "none",
+      "iso_url": "output/charms-base-x86_64-qemu/charms-base-x86_64.raw"
+      "disk_image": true,
+      "net_device": "virtio-net",
+      "output_directory": "output/charms-ajenty-x86_64-qemu/",
+      "qemuargs": [
+        [
+          "-m",
+          "1500"
+        ],
+        [
+          "-device",
+          "virtio-scsi-pci,id=scsi0"
+        ],
+        [
+          "-drive",
+          "if=none,cache=unsafe,id=drive0,discard=unmap,file=output/charms-ajenty-x86_64-qemu/charms-ajenty-x86_64.raw"
+        ],
+        [
+          "-device",
+          "scsi-hd,bus=scsi0.0,drive=drive0"
+        ],
+        [
+          "-device",
+          "virtio-net,netdev=user.0"
+        ],
+        [  
+          "-machine",
+          "type=pc,accel=kvm"
+        ]
+      ],
+      "shutdown_command": "shutdown -h now",
+      "ssh_password": "packer",
+      "ssh_username": "root",
+      "ssh_wait_timeout": "10000s",
+      "type": "qemu",
+      "vm_name": "charms-ajenty-x86_64"
+    }
+  ],
+  "provisioners": [
+    {
+      "scripts": [
+        "scripts/ajenty.sh"
+      ],
+      "type": "shell"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "compress",
+        "format": "gzip",
+        "output": "output/charms-ajenty-x86_64-compress/",
+        "only": ["qemu"]
+      }
+    ]
+  ]
+}

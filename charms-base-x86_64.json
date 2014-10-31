@@ -23,12 +23,9 @@
         " -- ",
         "<enter>"
       ],
-      "floppy_files": [
-          "floppy/*"
-      ],
       "boot_wait": "5s",
       "disk_interface": "scsi",
-      "disk_size": 8000,
+      "disk_size": 5000,
       "format": "raw",
       "headless": true,
       "http_directory": "http",
@@ -36,11 +33,11 @@
       "iso_checksum_type": "sha1",
       "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04-server-amd64.iso",
       "net_device": "virtio-net",
-      "output_directory": "output/ubuntu-joomla-x86_64-qemu/",
+      "output_directory": "output/charms-base-x86_64-qemu/",
       "qemuargs": [
         [
           "-m",
-          "1500"
+          "512"
         ],
         [
           "-device",
@@ -48,7 +45,7 @@
         ],
         [
           "-drive",
-          "if=none,cache=unsafe,id=drive0,discard=unmap,file=output/ubuntu-joomla-x86_64-qemu/ubuntu-joomla-x86_64.raw"
+          "if=none,cache=unsafe,id=drive0,discard=unmap,file=output/charms-base-x86_64-qemu/charms-base-x86_64.raw"
         ],
         [
           "-device",
@@ -58,7 +55,7 @@
           "-device",
           "virtio-net,netdev=user.0"
         ],
-        [  
+        [
           "-machine",
           "type=pc,accel=kvm"
         ]
@@ -68,7 +65,7 @@
       "ssh_username": "root",
       "ssh_wait_timeout": "10000s",
       "type": "qemu",
-      "vm_name": "ubuntu-joomla-x86_64"
+      "vm_name": "charms-base-x86_64"
     }
   ],
   "provisioners": [
@@ -81,20 +78,10 @@
     },
     {
       "scripts": [
-        "scripts/joomla.sh"
+        "scripts/cleanup.sh"
       ],
       "pause_before": "30s",
       "type": "shell"
     }
-  ],
-  "post-processors": [
-    [
-      {
-        "type": "compress",
-        "format": "gzip",
-        "output": "output/ubuntu-joomla-x86_64-compress/",
-        "only": ["qemu"]
-      }
-    ]
   ]
 }

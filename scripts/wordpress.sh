@@ -1,7 +1,11 @@
 #!/bin/bash -xe
 
 date "+%Y-%m-%d %H:%M:%S"
-apt-get -y --force-yes install software-properties-common cloud-init jq curl
+echo -n "o\nn\np\n1\n\n\nw\n" | fdisk -u /dev/sda
+resize2fs /dev/sda1
+
+apt-get update
+apt-get -y --force-yes install software-properties-common jq curl
 
 add-apt-repository --yes ppa:juju/stable
 apt-get -y --force-yes update

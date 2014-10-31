@@ -1,0 +1,71 @@
+{
+  "builders": [
+    {
+      "accelerator": "kvm",
+      "boot_command": [],
+      "boot_wait": "5s",
+      "disk_interface": "scsi",
+      "disk_size": 8000,
+      "format": "raw",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum_type": "none",
+      "disk_image": true,
+      "iso_url": "{{pwd}}/output/charms-base-x86_64-qemu/charms-base-x86_64.raw",
+      "net_device": "virtio-net",
+      "output_directory": "output/charms-wordpress-x86_64-qemu/",
+      "machine_type": "pc-i440fx-1.7",
+      "qemuargs": [
+        [
+          "-m",
+          "1500"
+        ],
+        [
+          "-device",
+          "virtio-scsi-pci,id=scsi0"
+        ],
+        [
+          "-drive",
+          "if=none,cache=unsafe,id=drive0,discard=unmap,file=output/charms-wordpress-x86_64-qemu/charms-wordpress-x86_64.raw"
+        ],
+        [
+          "-device",
+          "scsi-hd,bus=scsi0.0,drive=drive0"
+        ],
+        [
+          "-device",
+          "virtio-net,netdev=user.0"
+        ],
+        [  
+          "-machine",
+          "type=pc,accel=kvm"
+        ]
+      ],
+      "shutdown_command": "shutdown -h now",
+      "ssh_password": "packer",
+      "ssh_username": "root",
+      "ssh_wait_timeout": "10000s",
+      "type": "qemu",
+      "vm_name": "charms-wordpress-x86_64"
+    }
+  ],
+  "provisioners": [
+    {
+      "scripts": [
+        "scripts/wordpress.sh",
+        "scripts/cloud.sh"
+      ],
+      "type": "shell"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "compress",
+        "format": "gzip",
+        "output": "output/charms-wordpress-x86_64-compress/",
+        "only": ["qemu"]
+      }
+    ]
+  ]
+}
