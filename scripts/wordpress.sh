@@ -1,7 +1,16 @@
 #!/bin/bash -xe
 
 date "+%Y-%m-%d %H:%M:%S"
-echo -n "o\nn\np\n1\n\n\nw\n" | fdisk -u /dev/sda
+#sleep 600m
+echo -n "o
+n
+p
+1
+2048
+
+w
+" | fdisk -u /dev/sda || true
+partprobe /dev/sda
 resize2fs /dev/sda1
 
 apt-get update
