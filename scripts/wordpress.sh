@@ -9,8 +9,7 @@ p
 2048
 
 w
-" | fdisk -u /dev/sda || true
-partprobe /dev/sda
+" | fdisk -u /dev/sda || partprobe /dev/sda
 resize2fs /dev/sda1
 
 apt-get update
