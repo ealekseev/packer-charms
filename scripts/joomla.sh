@@ -1,6 +1,17 @@
 #!/bin/bash -xe
 
 date "+%Y-%m-%d %H:%M:%S"
+echo -n "o
+n
+p
+1
+2048
+
+w
+" | fdisk -u /dev/sda || partprobe /dev/sda
+resize2fs /dev/sda1
+
+apt-get update
 apt-get -y --force-yes install software-properties-common cloud-init jq curl
 
 add-apt-repository --yes ppa:juju/stable
