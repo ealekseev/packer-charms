@@ -12,7 +12,7 @@ w
 resize2fs /dev/sda1
 
 apt-get update
-apt-get -y --force-yes install software-properties-common cloud-init jq curl
+apt-get -y --force-yes install software-properties-common jq curl
 
 add-apt-repository --yes ppa:juju/stable
 apt-get -y --force-yes update

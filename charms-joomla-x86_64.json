@@ -5,7 +5,7 @@
       "boot_command": [],
       "boot_wait": "5s",
       "disk_interface": "scsi",
-      "disk_size": 8000,
+      "disk_size": 5000,
       "format": "raw",
       "headless": true,
       "http_directory": "http",
@@ -49,7 +49,8 @@
   "provisioners": [
     {
       "scripts": [
-        "scripts/joomla.sh"
+        "scripts/joomla.sh",
+        "scripts/cloud.sh"
       ],
       "type": "shell"
     }
