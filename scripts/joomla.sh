@@ -5,7 +5,7 @@ echo -n "o
 n
 p
 1
-2048
+
 
 a
 1
@@ -119,6 +119,9 @@ while true; do
     echo "waiting 5s"
     sleep 5s
 done
+
+update-grub
+grub-install /dev/sda
 
 date "+%Y-%m-%d %H:%M:%S"
 
