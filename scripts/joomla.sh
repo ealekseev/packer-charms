@@ -7,6 +7,8 @@ p
 1
 2048
 
+a
+1
 w
 " | fdisk -u /dev/sda || partprobe /dev/sda
 resize2fs /dev/sda1
