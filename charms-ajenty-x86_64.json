@@ -5,15 +5,17 @@
       "boot_command": [],
       "boot_wait": "5s",
       "disk_interface": "scsi",
-      "disk_size": 8000,
+      "disk_size": 5000,
+      "disk_image": true,
+      "disk_cache": "unsafe",
       "format": "raw",
       "headless": true,
       "http_directory": "http",
       "iso_checksum_type": "none",
-      "iso_url": "output/charms-base-x86_64-qemu/charms-base-x86_64.raw"
-      "disk_image": true,
+      "iso_url": "output/charms-base-x86_64-qemu/charms-base-x86_64.raw",
       "net_device": "virtio-net",
       "output_directory": "output/charms-ajenty-x86_64-qemu/",
+      "machine_type": "pc-i440fx-1.7",
       "qemuargs": [
         [
           "-m",
@@ -34,10 +36,6 @@
         [
           "-device",
           "virtio-net,netdev=user.0"
-        ],
-        [  
-          "-machine",
-          "type=pc,accel=kvm"
         ]
       ],
       "shutdown_command": "shutdown -h now",
@@ -51,7 +49,10 @@
   "provisioners": [
     {
       "scripts": [
-        "scripts/ajenty.sh"
+        "scripts/diskfix.sh",
+        "scripts/ajenty.sh",
+        "scripts/cloud.sh",
+        "scripts/grubfix.sh"
       ],
       "type": "shell"
     }
@@ -60,7 +61,7 @@
     [
       {
         "type": "compress",
-        "format": "gzip",
+        "format": "pgzip",
         "output": "output/charms-ajenty-x86_64-compress/",
         "only": ["qemu"]
       }
