@@ -2,6 +2,7 @@
 install:
 	$(eval TPL := $(filter-out $@,$(MAKECMDGOALS)))
 	$(eval SRC := $(shell jq -r '.["post-processors"][][-1].output' $(TPL).json)/$(TPL).raw)
+	$(eval SRC := $(shell jq -r '.["post-processors"][][.["post-processors"][] | length - 1].output' $(TPL).json)/$(TPL).raw)
 	cp -v $(SRC) $(DESTDIR)
 
 build:
