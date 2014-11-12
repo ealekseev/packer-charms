@@ -1,16 +1,6 @@
 #!/bin/bash -xe
 
 date "+%Y-%m-%d %H:%M:%S"
-#sleep 600m
-echo -n "o
-n
-p
-1
-2048
-
-w
-" | fdisk -u /dev/sda || partprobe /dev/sda
-resize2fs /dev/sda1
 
 apt-get update
 apt-get -y --force-yes install software-properties-common jq curl
@@ -45,7 +35,7 @@ for d in juju mysql wordpress; do
     lxc-attach -n $d -- /usr/bin/ssh-keygen -A
     lxc-attach -n $d -- /usr/sbin/service ssh restart
     lxc-attach -n $d -- mkdir -p /home/ubuntu/.ssh/
-    test -d /var/lib/lxc/$d/delta0/home/ubuntu/.ssh && cat /root/.ssh/juju.pub > /var/lib/lxc/$d/delta0/home/ubuntu/.ssh/authorized_keys
+    cat /root/.ssh/juju.pub > /var/lib/lxc/$d/delta0/home/ubuntu/.ssh/authorized_keys
     grep -q "lxc.start.auto = 1" /var/lib/lxc/$d/config || echo "lxc.start.auto = 1" >> /var/lib/lxc/$d/config
     grep -q "lxc.start.delay = 5" /var/lib/lxc/$d/config || echo "lxc.start.delay = 5" >> /var/lib/lxc/$d/config
 done
@@ -109,14 +99,14 @@ juju add-relation haproxy wordpress
 
 for s in mysql wordpress haproxy; do
     while true; do
-        juju status $s/0 --format=json| jq ".services.$s.units" | grep -q 'agent-state' && break
+        juju status $s/0 --format=json | jq ".services.$s.units" | grep -q 'agent-state: started' && break
         echo "waiting 5s"
         sleep 5s
     done
 done
 
 while true; do
-    curl -L -s http://127.0.0.1 2>&1 | grep -q "Select a default language" && break
+    curl -L -s http://127.0.0.1 2>&1 >/dev/null && break
     echo "waiting 5s"
     sleep 5s
 done
