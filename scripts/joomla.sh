@@ -80,8 +80,8 @@ juju add-machine ssh:ubuntu@${WP_IP} #2
 juju add-machine ssh:ubuntu@${MYSQL_IP} #3
 
 mkdir -p charms/trusty
-test -d charms/trusty/mysql || git clone https://github.com/vtolstov/charm-mysql charms/trusty/mysql
-test -d charms/trusty/joomla || git clone https://github.com/vtolstov/charm-joomla charms/trusty/joomla
+test -d charms/trusty/mysql || git clone -b trusty https://github.com/vtolstov/charm-mysql charms/trusty/mysql
+test -d charms/trusty/joomla || git clone -b trusty https://github.com/vtolstov/charm-joomla charms/trusty/joomla
 juju deploy --repository=charms/ local:trusty/mysql --to 3 || juju deploy --repository=charms/ local:trusty/mysql --to 3 || exit 1;
 juju set mysql dataset-size=50%
 juju set mysql query-cache-type=ON
@@ -96,7 +96,7 @@ juju add-relation haproxy joomla
 
 for s in mysql joomla haproxy; do
     while true; do
-        juju status $s/0 --format=json| jq ".services.$s.units" | grep -q 'agent-state' && break
+        juju status $s/0 --format=json | jq ".services.$s.units" | grep -q 'agent-state: started' && break
         echo "waiting 5s"
         sleep 5s
     done
