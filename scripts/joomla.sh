@@ -98,7 +98,7 @@ juju add-relation haproxy joomla
 
 for s in mysql joomla haproxy; do
     while true; do
-        juju status $s/0 --format=json | jq ".services.$s.units" | grep -q 'agent-state: started' && break
+        juju status $s/0 --format=json | jq ".services.$s.units" | grep -q '"agent-state": "started"' && break
         echo "waiting 5s"
         sleep 5s
     done

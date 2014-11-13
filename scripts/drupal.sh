@@ -1,7 +1,6 @@
 #!/bin/bash -xe
 
 date "+%Y-%m-%d %H:%M:%S"
-
 apt-get update
 apt-get -y --force-yes install software-properties-common jq curl
 
@@ -12,17 +11,17 @@ useradd -G sudo -s /bin/bash -m -d /home/ubuntu ubuntu
 mkdir -p /root/.ssh
 test -f /root/.ssh/juju || ssh-keygen -t rsa -b 4096 -f /root/.ssh/juju -N ''
 echo "ubuntu ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/90-cloud-init-users"
-lxc-info -n trusty-base || lxc-create -t ubuntu-cloud -n trusty-base -- -r trusty -S /root/.ssh/juju.pub
+lxc-info -n trusty-base || lxc-create -t ubuntu-cloud -n trusty-base -- -r trusty -S /root/.ssh/juju
 
 lxc-info -n juju || lxc-clone -s -B aufs trusty-base juju
 lxc-info -n mysql || lxc-clone -s -B aufs trusty-base mysql
-lxc-info -n wordpress || lxc-clone -s -B aufs trusty-base wordpress
+lxc-info -n drupal || lxc-clone -s -B aufs trusty-base drupal
 
-for d in juju mysql wordpress; do
+for d in juju mysql drupal; do
   lxc-start -d -n $d;
 done
 
-for d in juju mysql wordpress; do
+for d in juju mysql drupal; do
   while (true) ; do
     if [ "$(lxc-info -n $d -i | awk '{print $2}')" != "" ]; then
         break
@@ -31,7 +30,7 @@ for d in juju mysql wordpress; do
   done
 done
 
-for d in juju mysql wordpress; do
+for d in juju mysql drupal; do
     lxc-attach -n $d -- /usr/bin/ssh-keygen -A
     lxc-attach -n $d -- /usr/sbin/service ssh restart
     lxc-attach -n $d -- mkdir -p /home/ubuntu/.ssh/
@@ -48,7 +47,7 @@ juju generate-config
 juju switch manual
 
 JUJU_IP=$(lxc-info -n juju -i | awk '{print $2}')
-WP_IP=$(lxc-info -n wordpress -i | awk '{print $2}')
+WP_IP=$(lxc-info -n drupal -i | awk '{print $2}')
 MYSQL_IP=$(lxc-info -n mysql -i | awk '{print $2}')
 
 cat <<_EOF_ > /root/.juju/environments.yaml
@@ -82,21 +81,22 @@ juju add-machine ssh:ubuntu@${MYSQL_IP} #3
 
 mkdir -p charms/trusty
 test -d charms/trusty/mysql || git clone -b trusty https://github.com/vtolstov/charm-mysql charms/trusty/mysql
-test -d charms/trusty/wordpress || git clone -b trusty https://github.com/vtolstov/charm-wordpress charms/trusty/wordpress
+test -d charms/trusty/drupal || git clone -b trusty https://github.com/vtolstov/charm-drupal charms/trusty/drupal
 test -d charms/trusty/haproxy || git clone -b trusty https://github.com/vtolstov/charm-haproxy charms/trusty/haproxy
+
 juju deploy --repository=charms/ local:trusty/mysql --to 3 || juju deploy --repository=charms/ local:trusty/mysql --to 3 || exit 1;
 juju set mysql dataset-size=50%
 juju set mysql query-cache-type=ON
 juju set mysql query-cache-size=-1
-juju deploy --repository=charms/ local:trusty/wordpress --to 2 || juju deploy --repository=charms/ local:trusty/wordpress --to 2 || exit 1;
-juju add-relation mysql wordpress
+juju deploy --repository=charms/ local:trusty/drupal --to 2 || juju deploy --repository=charms/ local:trusty/drupal --to 2 || exit 1;
+juju add-relation mysql drupal
 
-juju expose wordpress
+juju expose drupal
 
 juju deploy --repository=charms/ local:trusty/haproxy --to 1
-juju add-relation haproxy wordpress
+juju add-relation haproxy drupal
 
-for s in mysql wordpress haproxy; do
+for s in mysql drupal haproxy; do
     while true; do
         juju status $s/0 --format=json | jq ".services.$s.units" | grep -q '"agent-state": "started"' && break
         echo "waiting 5s"

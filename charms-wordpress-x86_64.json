@@ -52,7 +52,8 @@
         "scripts/diskfix.sh",
         "scripts/wordpress.sh",
         "scripts/cloud.sh",
-        "scripts/grubfix.sh"
+        "scripts/grubfix.sh",
+        "scripts/charmclean.sh"
       ],
       "type": "shell"
     }

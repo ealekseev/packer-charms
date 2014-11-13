@@ -97,6 +97,6 @@ rm -rf /usr/src/*
 echo "==> Removing any docs"
 rm -rf /usr/share/doc/*
 echo "==> Removing caches"
-find /var/cache -type f -exec rm -rf {} \;
+find /var/cache -type f | xargs rm -f
 
 fstrim -v /

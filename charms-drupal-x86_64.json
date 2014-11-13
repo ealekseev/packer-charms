@@ -14,7 +14,7 @@
       "iso_checksum_type": "none",
       "iso_url": "output/charms-base-x86_64-qemu/charms-base-x86_64.raw",
       "net_device": "virtio-net",
-      "output_directory": "output/charms-joomla-x86_64-qemu/",
+      "output_directory": "output/charms-drupal-x86_64-qemu/",
       "machine_type": "pc-i440fx-1.7",
       "qemuargs": [
         [
@@ -27,7 +27,7 @@
         ],
         [
           "-drive",
-          "if=none,cache=unsafe,id=drive0,discard=unmap,file=output/charms-joomla-x86_64-qemu/charms-joomla-x86_64.raw"
+          "if=none,cache=unsafe,id=drive0,discard=unmap,file=output/charms-drupal-x86_64-qemu/charms-drupal-x86_64.raw"
         ],
         [
           "-device",
@@ -43,14 +43,14 @@
       "ssh_username": "root",
       "ssh_wait_timeout": "10000s",
       "type": "qemu",
-      "vm_name": "charms-joomla-x86_64"
+      "vm_name": "charms-drupal-x86_64"
     }
   ],
   "provisioners": [
     {
       "scripts": [
         "scripts/diskfix.sh",
-        "scripts/joomla.sh",
+        "scripts/drupal.sh",
         "scripts/cloud.sh",
         "scripts/grubfix.sh",
         "scripts/charmclean.sh"
@@ -63,7 +63,7 @@
       {
         "type": "compress",
         "format": "pgzip",
-        "output": "output/charms-joomla-x86_64-compress/",
+        "output": "output/charms-drupal-x86_64-compress/",
         "only": ["qemu"]
       }
     ]
